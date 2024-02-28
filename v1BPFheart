@@ -1,0 +1,24 @@
+from scipy.io import wavfile
+from scipy import signal
+import numpy as np
+
+cutoff = 1000 # frequency cutoff in Hz
+infile = 'yourmother.wav' # input wav file
+outfile = 'urmom.wav' # output wav file
+
+# from what I can tell this is how agressively frequencies above the cutoff get 
+# weakened, at 3.0 it seems to eliminate the harsh peaks
+strength = 3.0
+filter_type = 'lowpass' # do 'highpass' or 'lowpass'
+
+# read wav file
+sr, data = wavfile.read(infile)
+
+# create filter
+filter = signal.firwin(101, cutoff=cutoff, fs=sr, pass_zero=filter_type)
+
+# apply filter
+filtered = signal.lfilter(filter, [strength], data)
+
+# write filtered data to new wav file
+wavfile.write(outfile, sr, filtered.astype(np.int16))
