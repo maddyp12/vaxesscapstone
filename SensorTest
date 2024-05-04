@@ -1,0 +1,64 @@
+# Data Read 1 - Thumb
+# 26FEB2024
+# Author: Shanni Zhou
+
+import serial
+import csv
+import time
+import os
+
+
+def clear_serial_buffer(serial_port):
+    while serial_port.in_waiting > 0:
+        serial_port.read()
+
+teensy = serial.Serial('COM5', 9600)   # Set port to COM3
+
+
+sensor = 'AB4113B-LW100-R'
+# test = "F"
+test = "Q"
+
+# Set time
+duration = 10
+start_time = time.time()
+end_time = start_time + duration
+i = 0
+
+# Create/Open CSV file
+testNum = 17 # CHANGE THIS
+filename = "C:\\Users\\Shanni Zhou\\Desktop\\Capstone Codes\\.venv\\Sensor Testing\\" + sensor + "_" + test + str(testNum) + ".csv"
+
+if os.path.exists(filename):
+    print('Already exists')
+    # confirm = input("File exists. Would you like to overwrite? Y/N")
+else:
+    with open(filename, 'w') as csvfile:
+        writer = csv.writer(csvfile)
+
+        try:
+            # Continuous sensor reading
+            print("here1")
+            while time.time() < end_time:
+                print("here2")
+                pzt_data = teensy.readline().decode().strip()
+                # pzt_data = arduino.read(12).decode().strip()
+                print(pzt_data)
+                print("here3")
+                values = pzt_data.split(',')
+                print("here4")
+                writer.writerow([i, pzt_data])
+                print("here5")
+                i += 1
+                print("here6")
+        except KeyboardInterrupt:
+            print ("Collection terminated")
+
+#clear_serial_buffer(arduino)
+#serial.flush()
+
+# Close the serial port
+#serial.close()
+
+
+

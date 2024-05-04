@@ -1,0 +1,41 @@
+# Data Read 1 - Thumb
+# 26FEB2024
+# Author: Shanni Zhou
+
+import serial
+import csv
+import time
+import os
+
+
+arduino = serial.Serial('COM3', 9600)   # Set port to COM3
+
+# Set time
+duration = 8
+start_time = time.time()
+end_time = start_time + duration
+i = 0
+
+# Create/Open CSV file
+testNum = 8 # CHANGE THIS
+filename = "C:\\Users\\Shanni Zhou\\Desktop\\Capstone Codes\\.venv\\DataRead\\" + "dryTest" + str(testNum) + ".csv"
+
+if os.path.exists(filename):
+    print('Already exists')
+    # confirm = input("File exists. Would you like to overwrite? Y/N")
+else:
+    with open(filename, 'w') as csvfile:
+        writer = csv.writer(csvfile)
+
+        try:
+            # Continuous sensor reading
+            while time.time() < end_time:
+                pzt_data = arduino.readline().decode().strip()
+                values = pzt_data.split(',')
+                writer.writerow([i, pzt_data])
+                i += 1
+        except KeyboardInterrupt:
+            print ("Collection terminated")
+
+
+
