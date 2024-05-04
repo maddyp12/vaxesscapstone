@@ -1,0 +1,28 @@
+import pandas as pd
+import numpy as np
+
+# Read the CSV file into a DataFrame
+filename = "sanitizedG1.csv"
+df = pd.read_csv(filename)
+
+# Extract the signal values from the DataFrame
+signal_values = df['Volts'].values
+
+# Calculate the mean and standard deviation of the signal values
+mean_value = np.mean(signal_values)
+std_dev = np.std(signal_values)
+
+# Calculate the upper and lower thresholds based on 2 standard deviations from the mean
+upper_threshold = mean_value + 2 * std_dev
+lower_threshold = mean_value - 2 * std_dev
+
+# Flag any values that are outside the threshold range
+flagged_values = df[(df['Volts'] > upper_threshold) | (df['Volts'] < lower_threshold)]
+
+# Print the results
+print("Mean:", mean_value)
+print("Standard Deviation:", std_dev)
+print("Upper Threshold:", upper_threshold)
+print("Lower Threshold:", lower_threshold)
+print("\nFlagged Values:")
+print(flagged_values)

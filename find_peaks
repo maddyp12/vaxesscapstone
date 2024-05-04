@@ -1,0 +1,38 @@
+import numpy as np
+import csv 
+import pandas as pd
+import matplotlib.pyplot as plt
+from scipy.signal import find_peaks
+
+filename = "sanitizedG2.csv"
+# Importing data from the piezoelectric sensor
+raw_data = pd.read_csv(filename)
+data = raw_data["Volts"].values
+presignal = np.delete(data, 1, 0)
+signal = presignal.flatten()
+print(signal)
+
+# creating the appropriate time vector
+signal_len = 0
+signal_len = raw_data["Time"].iloc[-1] / 2
+fs = 1000.0  # Sampling frequency (Hz)
+duration = signal_len / fs  # Duration of the signal (seconds)
+time = np.linspace(0, duration, int(fs*duration))  # Time vector
+
+# Find peaks in the signal
+peaks, _ = find_peaks(signal, distance=150)
+
+# Plot the signal with detected peaks
+plt.figure(figsize=(10, 6))
+plt.plot(time, signal, label='Signal')
+plt.plot(time[peaks], signal[peaks], 'x', color='red', label='Peaks')
+plt.title('Peaks Detection in Piezoelectric Sensor Data')
+plt.xlabel('Time (s)')
+plt.ylabel('Amplitude (mV)')
+plt.legend()
+plt.grid(True)
+plt.show()
+
+# Calculate the average number of peaks
+average_peaks = len(peaks) / len(time)
+print("Average number of peaks:", average_peaks)
